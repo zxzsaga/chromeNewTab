@@ -4,9 +4,8 @@ $(document).ready(function() {
         bookmarkTree.forEach(function(oneOfSon) {
             addSon(simpleBookmarkTree, oneOfSon);
         });
-        console.log(simpleBookmarkTree);
-
-        appendSubMenu(simpleBookmarkTree[''], true)
+        simpleBookmarkTree = JSON.parse(JSON.stringify(simpleBookmarkTree, null, '  '));
+        appendSubMenu(simpleBookmarkTree[''], true);
     });
 });
 
@@ -23,6 +22,9 @@ function addSon(father, son) {
 }
 
 function appendSubMenu(father, isLv1, fatherName) {
+    var panelBodyContent = $('<div></div>')
+        .addClass('panel-body');
+
     for (var son in father) {
         if (isLv1) { // lv1 always folder
             var a = $('<a></a>')
@@ -37,15 +39,13 @@ function appendSubMenu(father, isLv1, fatherName) {
                 .addClass('panel-heading')
                 .append(panelTitle);
 
-            var panelBody = $('<div></div>')
-                .addClass('panel-body');
-            var zzzzzzz = appendSubMenu(father[son], false, son);
-            panelBody.append(zzzzzzz);
+            var panelBody = appendSubMenu(father[son], false, son);
             var panelBodyFather = $('<div></div>')
                 .attr('id', son)
                 .addClass('panel-collapse')
                 .addClass('collapse')
                 .addClass('in')
+                .append(panelBody);
 
             var panel = $('<div></div>')
                 .addClass('panel')
@@ -59,9 +59,9 @@ function appendSubMenu(father, isLv1, fatherName) {
             if (typeof father[son] === 'string') {
                 var a = $('<a></a>')
                     .text(son)
-                    .attr('href', father[son]);
-                return a;
-                // $('#' + sonName + '.panel-body').append(a);
+                    .attr('href', father[son])
+                var br = $('<br />');
+                panelBodyContent.append(a).append(br);
             }
             else if (typeof father[son] === 'object') {
                 var a = $('<a></a>')
@@ -76,23 +76,23 @@ function appendSubMenu(father, isLv1, fatherName) {
                     .addClass('panel-heading')
                     .append(panelTitle);
 
-                var panelBody = $('<div></div>')
-                    .addClass('panel-body');
-                var zzzzzzz = appendSubMenu(father[son], false, son);
-                panelBody.append(zzzzzzz);
+                var panelBody = appendSubMenu(father[son], false, son);
                 var panelBodyFather = $('<div></div>')
                     .attr('id', son)
                     .addClass('panel-collapse')
                     .addClass('collapse')
                     .addClass('in')
+                    .append(panelBody);
 
                 var panel = $('<div></div>')
                     .addClass('panel')
                     .addClass('panel-default')
                     .append(panelHeading)
                     .append(panelBodyFather);
-                return panel;
+
+                panelBodyContent.append(panel);
             }
         }
     }
+    return panelBodyContent;
 }
