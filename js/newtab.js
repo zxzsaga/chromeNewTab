@@ -1,19 +1,23 @@
-$(document).ready(function() {
+$(document).ready(init);
+
+function init() {
     chrome.bookmarks.getTree(function(bookmarkTree, result) {
         var simpleBookmarkTree = {};
         bookmarkTree.forEach(function(oneOfSon) {
-            addSon(simpleBookmarkTree, oneOfSon);
+            simpleTreeAddSon(simpleBookmarkTree, oneOfSon);
         });
         simpleBookmarkTree = JSON.parse(JSON.stringify(simpleBookmarkTree, null, '  '));
-        appendSubMenu(simpleBookmarkTree[''], true);
+        uiAppendSubMenu(simpleBookmarkTree[''], true);
     });
-});
 
-function addSon(father, son) {
+    init_thumbnails();
+}
+
+function simpleTreeAddSon(father, son) {
     if (son.hasOwnProperty('children')) {
         father[son.title] = {};
         son.children.forEach(function(oneOfSon) {
-            addSon(father[son.title], oneOfSon);
+            simpleTreeAddSon(father[son.title], oneOfSon);
         });
     }
     else {
@@ -21,7 +25,7 @@ function addSon(father, son) {
     }
 }
 
-function appendSubMenu(father, isLv1, fatherName) {
+function uiAppendSubMenu(father, isLv1, fatherName) {
     var panelBodyContent = $('<div></div>')
         .addClass('panel-body');
 
@@ -39,14 +43,15 @@ function appendSubMenu(father, isLv1, fatherName) {
                 .addClass('panel-heading')
                 .append(panelTitle);
 
-            var panelBody = appendSubMenu(father[son], false, son);
+            var panelBody = uiAppendSubMenu(father[son], false, son);
             var panelBodyFather = $('<div></div>')
                 .attr('id', son)
                 .addClass('panel-collapse')
                 .addClass('collapse')
-                .addClass('in')
                 .append(panelBody);
-
+            if (son === '书签栏') {
+                panelBodyFather.addClass('in');
+            }
             var panel = $('<div></div>')
                 .addClass('panel')
                 .addClass('panel-default')
@@ -76,7 +81,7 @@ function appendSubMenu(father, isLv1, fatherName) {
                     .addClass('panel-heading')
                     .append(panelTitle);
 
-                var panelBody = appendSubMenu(father[son], false, son);
+                var panelBody = uiAppendSubMenu(father[son], false, son);
                 var panelBodyFather = $('<div></div>')
                     .attr('id', son)
                     .addClass('panel-collapse')
@@ -96,3 +101,53 @@ function appendSubMenu(father, isLv1, fatherName) {
     }
     return panelBodyContent;
 }
+
+/* initial the center thumbnails.
+ */
+function init_thumbnails() {
+  var thumbnails_ul;
+  var thumbnails_counter = 0;
+  for (site in site_table) {
+    if (thumbnails_counter % 6 == 0) {
+      if (thumbnails_counter != 0)
+        $("#center-block").append(thumbnails_ul);
+      thumbnails_ul = $("<ul></ul>").addClass("thumbnails");
+    }
+    var thumbnails_li = $("<li></li>").addClass("span2");
+    var thumbnails_a = $("<a></a>")
+      .addClass("thumbnail")
+      .attr("href", "http://" + site_table[site])
+      .css("padding", "0");
+    thumbnails_a.append($("<img />")
+                        .attr({"src": "img/site/" + site + ".png",
+                               "onerror": "javascript:this.src='img/site/logo_not_found.png'"
+                              })
+                        .css("width", "100%"));
+    thumbnails_a.append(site);
+    thumbnails_li.append(thumbnails_a);
+    thumbnails_ul.append(thumbnails_li);
+    thumbnails_counter ++;
+  }
+  $("#center-block").append(thumbnails_ul);
+};
+
+var site_table = {
+  "amazon": "amazon.cn",
+  "baidu": "baidu.com",
+  "bilibili": "bilibili.tv",
+  "dev.sugarlady": "dev.sugarlady.com",
+  "eleme": "ele.me",
+  "exmail.qq": "exmail.qq.com",
+  "google": "google.com.hk",
+  "putao": "pt.sjtu.edu.cn",
+  "renren": "renren.com",
+  "review board": "reviews.sugarlady.com/dashboard/",
+  "sae": "sae.sina.com.cn",
+  "sina": "sina.com.cn",
+  "sjtu bbs": "bbs.sjtu.edu.cn",
+  "taobao": "taobao.com",
+  "w3school": "w3school.com.cn",
+  "weibo": "weibo.com",
+  "youku": "i.youku.com"
+};
+
