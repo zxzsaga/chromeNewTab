@@ -105,49 +105,49 @@ function uiAppendSubMenu(father, isLv1, fatherName) {
 /* initial the center thumbnails.
  */
 function init_thumbnails() {
-  var thumbnails_ul;
-  var thumbnails_counter = 0;
-  for (site in site_table) {
-    if (thumbnails_counter % 6 == 0) {
-      if (thumbnails_counter != 0)
-        $("#center-block").append(thumbnails_ul);
-      thumbnails_ul = $("<ul></ul>").addClass("thumbnails");
+    var thumbnails_ul;
+    var thumbnails_counter = 0;
+    for (site in site_table) {
+        if (thumbnails_counter % 4 == 0) {
+            if (thumbnails_counter != 0) {
+                $("#center-block").append(thumbnails_ul);
+            }
+            thumbnails_ul = $("<ul></ul>").addClass("thumbnails");
+        }
+        var thumbnails_li = $("<li></li>").addClass("col-lg-3");
+        var thumbnails_a = $("<a></a>")
+            .addClass("thumbnail")
+            .attr("href", "http://" + site_table[site])
+            .css("padding", "0");
+        thumbnails_a.append($("<img />")
+                            .attr({"src": "img/thumbnail/" + site + ".png",
+                                   "onerror": "javascript:this.src='img/thumbnail/logo_not_found.png'"
+                                  })
+                            .css("width", "100%"));
+        thumbnails_a.append(site);
+        thumbnails_li.append(thumbnails_a);
+        thumbnails_ul.append(thumbnails_li);
+        thumbnails_counter ++;
     }
-    var thumbnails_li = $("<li></li>").addClass("span2");
-    var thumbnails_a = $("<a></a>")
-      .addClass("thumbnail")
-      .attr("href", "http://" + site_table[site])
-      .css("padding", "0");
-    thumbnails_a.append($("<img />")
-                        .attr({"src": "img/site/" + site + ".png",
-                               "onerror": "javascript:this.src='img/site/logo_not_found.png'"
-                              })
-                        .css("width", "100%"));
-    thumbnails_a.append(site);
-    thumbnails_li.append(thumbnails_a);
-    thumbnails_ul.append(thumbnails_li);
-    thumbnails_counter ++;
-  }
-  $("#center-block").append(thumbnails_ul);
+    $("#center-block").append(thumbnails_ul);
 };
 
 var site_table = {
-  "amazon": "amazon.cn",
-  "baidu": "baidu.com",
-  "bilibili": "bilibili.tv",
-  "dev.sugarlady": "dev.sugarlady.com",
-  "eleme": "ele.me",
-  "exmail.qq": "exmail.qq.com",
-  "google": "google.com.hk",
-  "putao": "pt.sjtu.edu.cn",
-  "renren": "renren.com",
-  "review board": "reviews.sugarlady.com/dashboard/",
-  "sae": "sae.sina.com.cn",
-  "sina": "sina.com.cn",
-  "sjtu bbs": "bbs.sjtu.edu.cn",
-  "taobao": "taobao.com",
-  "w3school": "w3school.com.cn",
-  "weibo": "weibo.com",
-  "youku": "i.youku.com"
+    "amazon": "amazon.cn",
+    "baidu": "baidu.com",
+    "bilibili": "bilibili.tv",
+    "dev.sugarlady": "dev.sugarlady.com",
+    "eleme": "ele.me",
+    "exmail.qq": "exmail.qq.com",
+    "google": "google.com.hk",
+    "putao": "pt.sjtu.edu.cn",
+    "renren": "renren.com",
+    "review board": "reviews.sugarlady.com/dashboard/",
+    "sae": "sae.sina.com.cn",
+    "sina": "sina.com.cn",
+    "sjtu bbs": "bbs.sjtu.edu.cn",
+    "taobao": "taobao.com",
+    "w3school": "w3school.com.cn",
+    "weibo": "weibo.com",
+    "youku": "i.youku.com"
 };
-
