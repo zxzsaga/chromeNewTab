@@ -10,7 +10,8 @@ function init() {
         uiAppendSubMenu(simpleBookmarkTree[''], true);
     });
 
-    init_thumbnails();
+    initThumbnails();
+    eventListener();
 }
 
 function simpleTreeAddSon(father, son) {
@@ -104,35 +105,42 @@ function uiAppendSubMenu(father, isLv1, fatherName) {
 
 /* initial the center thumbnails.
  */
-function init_thumbnails() {
-    var thumbnails_ul;
-    var thumbnails_counter = 0;
-    for (site in site_table) {
-        if (thumbnails_counter % 4 == 0) {
-            if (thumbnails_counter != 0) {
-                $("#center-block").append(thumbnails_ul);
-            }
-            thumbnails_ul = $("<ul></ul>").addClass("thumbnails");
-        }
-        var thumbnails_li = $("<li></li>").addClass("col-lg-3");
-        var thumbnails_a = $("<a></a>")
-            .addClass("thumbnail")
-            .attr("href", "http://" + site_table[site])
-            .css("padding", "0");
-        thumbnails_a.append($("<img />")
-                            .attr({"src": "img/thumbnail/" + site + ".png",
-                                   "onerror": "javascript:this.src='img/thumbnail/logo_not_found.png'"
-                                  })
-                            .css("width", "100%"));
-        thumbnails_a.append(site);
-        thumbnails_li.append(thumbnails_a);
-        thumbnails_ul.append(thumbnails_li);
-        thumbnails_counter ++;
+function initThumbnails() {
+    var thumbnailsRow = '';
+    var thumbnailsCounter = 0;
+    var thumbnailsLength = 0;
+    for (site in siteTable) {
+        thumbnailsLength ++;
     }
-    $("#center-block").append(thumbnails_ul);
+    for (site in siteTable) {
+        if (thumbnailsCounter % 4 === 0) {
+            $('#center-block').append(thumbnailsRow);
+            thumbnailsRow = $('<div class="row"></div>');
+        }
+        var thumbnailImage = $('<img />')
+            .attr({'src': 'img/thumbnail/' + site + '.png'})
+            .css('width', '100%');
+        var thumbnailName = $('<div></div>').css('text-align', 'center').text(site);
+        var thumbnailA = $('<a class="thumbnail"></a>')
+            .attr('href', 'http://' + siteTable[site])
+            .append(thumbnailImage).append(thumbnailName);
+        var thumbnailDiv = $('<div></div>').addClass('col-lg-3')
+            .append(thumbnailA);
+        thumbnailsRow.append(thumbnailDiv);
+        if (thumbnailsCounter === thumbnailsLength - 1) {
+            $('#center-block').append(thumbnailsRow);
+        }
+        thumbnailsCounter ++;
+    }
 };
 
-var site_table = {
+function eventListener() {
+    $('.thumbnail img').error(function() {
+        this.src="img/thumbnail/logo_not_found.png";
+    });
+};
+
+var siteTable = {
     "amazon": "amazon.cn",
     "baidu": "baidu.com",
     "bilibili": "bilibili.tv",
