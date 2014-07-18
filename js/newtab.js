@@ -6,14 +6,16 @@ function init() {
         bookmarkTree.forEach(function(oneOfSon) {
             simpleTreeAddSon(simpleBookmarkTree, oneOfSon);
         });
-        simpleBookmarkTree = JSON.parse(JSON.stringify(simpleBookmarkTree, null, '  '));
+        simpleBookmarkTree = simpleBookmarkTree;
         uiAppendSubMenu(simpleBookmarkTree[''], true);
     });
 
+    initSearchEngine();
     initThumbnails();
     eventListener();
 }
 
+// use chrome bookmark tree generate a simple tree recursively
 function simpleTreeAddSon(father, son) {
     if (son.hasOwnProperty('children')) {
         father[son.title] = {};
@@ -26,6 +28,7 @@ function simpleTreeAddSon(father, son) {
     }
 }
 
+// use simple tree generate bookmark folder
 function uiAppendSubMenu(father, isLv1, fatherName) {
     var panelBodyContent = $('<div></div>')
         .addClass('panel-body');
@@ -103,8 +106,15 @@ function uiAppendSubMenu(father, isLv1, fatherName) {
     return panelBodyContent;
 }
 
-/* initial the center thumbnails.
- */
+function initSearchEngine() {
+    for (var searchEngineName in searchEngineTable) {
+        var a = $('<a></a>').text(searchEngineName).addClass('selectSearchEngine');
+        var li = $('<li></li>').append(a);
+        $('#searchEngineDropdownMenu').append(li);
+    }
+}
+
+// initial the center thumbnails.
 function initThumbnails() {
     var thumbnailsRow = '';
     var thumbnailsCounter = 0;
@@ -132,12 +142,28 @@ function initThumbnails() {
         }
         thumbnailsCounter ++;
     }
-};
+}
 
 function eventListener() {
+    // load thumbnail error
     $('.thumbnail img').error(function() {
         this.src="img/thumbnail/logo_not_found.png";
     });
+    // select search engine
+    $('.selectSearchEngine').click(function() {
+        $('#currentSearchEngine').text($(this).text());
+    });
+    // search
+    $('input').keydown(function(event) {
+        if (event.which === 13) {
+            window.open(searchEngineTable[$("#currentSearchEngine").text()] + $("#searchContent").val(), "_self");
+        }
+    });
+}
+
+var searchEngineTable = {
+    "Google": "http://www.google.com.hk/#q=",
+    "Baidu":  "http://www.baidu.com/s?wd="
 };
 
 var siteTable = {
